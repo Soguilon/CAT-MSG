@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Message</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #a8edea, #fed6e3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    .cat-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin-bottom: 20px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .cat {
+      width: 90%;
+      height: 90%;
+      background: url('https://i.gifer.com/nRv.gif') no-repeat center/contain;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .secret-message, .question, .response {
+      text-align: center;
+      font-size: 32px;
+      color: #1a4d47;
+      text-shadow: 0 0 20px #ffffff, 0 0 30px #2ec4b6, 0 0 40px #2ec4b6;
+      padding: 20px;
+      font-weight: bold;
+    }
+
+    .secret-message {
+      opacity: 0;
+      animation: reveal 5s ease-in-out forwards;
+      animation-delay: 2s;
+    }
+
+    @keyframes reveal {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0px); }
+    }
+
+    .buttons {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      margin: 15px;
+      padding: 18px 35px;
+      font-size: 24px;
+      background: linear-gradient(135deg, #2ec4b6, #cbf3f0);
+      border: none;
+      border-radius: 30px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .buttons button:hover {
+      background: linear-gradient(135deg, #00bfa6, #98f5e1);
+      transform: scale(1.1);
+    }
+
+    .response {
+      margin-top: 30px;
+      display: none;
+      background: white;
+      padding: 18px 35px;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      color: #00bfa6;
+      font-size: 26px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    a {
+      color: #1a4d47;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
+    .glow-effect {
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.8);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .secret-message, .question, .response {
+        font-size: 24px;
+      }
+
+      .buttons button {
+        font-size: 18px;
+        padding: 15px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="cat-container">
+  <div class="cat"></div>
+</div>
+
+<div class="secret-message glow-effect" id="secretMessage">😫 I miss you 😖</div>
+<div class="question glow-effect" id="question" style="display: none;">😩 Are you free? 🥺</div>
+<div class="buttons" id="buttons">
+  <button onclick="answerYes()">👍 Yes</button>
+  <button onclick="answerNo()">👎 No</button>
+</div>
+<div class="response" id="response"></div>
+
+<button id="hugButton" onclick="sendHug()">🤗 Send a Virtual Hug!</button>
+
+<!-- Full-Screen Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <p>💖 Let's reconnect! 💖</p>
+  </div>
+</div>
+
+<!-- Background Love Music -->
+<audio autoplay loop hidden>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+<script>
+  // Time-based message
+  let now = new Date();
+  let hours = now.getHours();
+  let greetingMessage = '';
+
+  if (hours < 12) {
+    greetingMessage = "Good Morning! 🌞";
+  } else if (hours < 18) {
+    greetingMessage = "Good Afternoon! 🌼";
+  } else {
+    greetingMessage = "Good Evening! 🌙";
+  }
+
+  document.getElementById('secretMessage').innerHTML = greetingMessage + " 😫 I miss you 😖";
+
+  // Trigger confetti animation
+  function triggerConfetti() {
+    confetti();
+  }
+
+  // Show modal
+  function showModal() {
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  // Answer "Yes"
+  function answerYes() {
+    triggerConfetti();
+    document.getElementById('response').style.display = 'block';
+    document.getElementById('response').innerHTML = "💬 Let's go do something (hang like we used to)! 💖<br><br>Chat Carl Asnef for more details.";
+    document.getElementById('buttons').style.display = 'none';
+    document.getElementById('question').style.display = 'none';
+    showModal();
+  }
+
+  // Answer "No"
+  function answerNo() {
+    triggerConfetti();
+    document.getElementById('response').style.display = 'block';
+    document.getElementById('response').innerHTML = "😕 When and what time? 🤔<br><br>Chat Carl Asnef for more details.";
+    document.getElementById('buttons').style.display = 'none';
+    document.getElementById('question').style.display = 'none';
+    showModal();
+  }
+
+  // Send Virtual Hug
+  function sendHug() {
+    alert("💖 Sending you a big virtual hug! 💖");
+  }
+
+  // After the secret message appears, show the question and buttons
+  setTimeout(() => {
+    document.getElementById('question').style.display = 'block';
+    document.getElementById('buttons').style.display = 'flex';
+  }, 8000);
+</script>
+
+</body>
+</html>
